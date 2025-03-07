@@ -72,14 +72,37 @@ function removeItem(index) {
 // وظيفة لإرسال الطلب
 function submitOrder() {
     const tableNumber = document.getElementById('table-number').value;
-    if (tableNumber) {
-        alert(`Order submitted for table ${tableNumber}`);
-        localStorage.clear(); // مسح الأطعمة بعد الإرسال
-        window.location.reload(); // إعادة تحميل الصفحة
-    } else {
+    if (!tableNumber) {
         alert("Please enter your table number.");
+        return;
     }
+
+    // جلب الطلبات المحفوظة في localStorage
+    const selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
+
+    if (selectedItems.length === 0) {
+        alert("Your order is empty!");
+        return;
+    }
+
+    // إرسال الطلب إلى السيرفر باستخدام fetch
+    fetch("http://localhost:3000/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tableNumber, order: selectedItems })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message); // عرض رسالة التأكيد
+        localStorage.clear(); // مسح الطلبات بعد الإرسال
+        window.location.reload(); // إعادة تحميل الصفحة
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Failed to send order. Please try again.");
+    });
 }
+
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
