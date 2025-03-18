@@ -25,6 +25,19 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error("❌ خطأ في جلب الطلبات:", error));
     }
 
+    document.getElementById("clearOrders").addEventListener("click", function () {
+    if (confirm("هل أنت متأكد من مسح جميع الطلبات؟")) {
+        fetch("http://localhost:3000/orders", { method: "DELETE" })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                fetchOrders(); // تحديث الجدول بعد الحذف
+            })
+            .catch(error => console.error("❌ خطأ في مسح الطلبات:", error));
+    }
+});
+
+
     setInterval(fetchOrders, 5000);
     fetchOrders();
 });
