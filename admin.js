@@ -2,22 +2,28 @@ document.addEventListener("DOMContentLoaded", function () {
     const ordersTable = document.getElementById("ordersTable");
     
     function fetchOrders() {
-        fetch("http://localhost:3000/latest-order")
-            .then(response => response.json())
-            .then(order => {
-                ordersTable.innerHTML = "";
-                if (order.message) return ordersTable.innerHTML = `<tr><td colspan="3">${order.message}</td></tr>`;
-                
-                ordersTable.innerHTML += `
-                    <tr>
-                        <td>${order.tableNumber}</td>
-                        <td>${order.order.map(item => item.item).join(", ")}</td>
-                        <td>${new Date(order.time).toLocaleTimeString()}</td>
-                    </tr>
+    fetch("http://localhost:3000/orders")
+        .then(response => response.json())
+        .then(orders => {
+            ordersTable.innerHTML = ""; // مسح الجدول قبل إعادة ملئه
+
+            if (!orders.length) {
+                ordersTable.innerHTML = <tr><td colspan="3">لا يوجد طلبات متاحة</td></tr>;
+                return;
+            }
+
+            orders.forEach(order => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${order.tableNumber}</td>
+                    <td>${order.order.map(item => item.item).join(", ")}</td>
+                    <td>${new Date(order.time).toLocaleTimeString()}</td>
                 `;
-            })
-            .catch(error => console.error("❌ Error fetching orders:", error));
-    }
+                ordersTable.appendChild(row);
+            });
+        })
+        .catch(error => console.error("❌ خطأ في جلب الطلبات:", error));
+}
     
     setInterval(fetchOrders, 5000);
     fetchOrders();
