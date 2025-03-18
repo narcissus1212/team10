@@ -1,46 +1,38 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
     const ordersTable = document.getElementById("ordersTable");
-    const orderFilter = document.getElementById("orderFilter");
 
-    // تحديث وعرض الطلبات في الجدول
-    function renderOrders(filter) {
-        ordersTable.innerHTML = "";
-        let filteredOrders = orders;
-
-        if (filter === "pending") {
-            filteredOrders = orders.filter(order => order.status === "pending");
-        } else if (filter === "delivered") {
-            filteredOrders = orders.filter(order => order.status === "delivered");
-        }
-
-        filteredOrders.forEach((order, index) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${order.tableNumber}</td>
-                <td>${order.items.map(item => item.item).join(", ")}</td>
-                <td>${order.orderType} ${order.arrivalTime ? (Arriving: ${order.arrivalTime}) : ""}</td>
-                <td>${order.status}</td>
-                <td>
-                    ${order.status === "pending" ? <button class="complete-btn" onclick="markAsDelivered(${index})">Mark as Delivered</button> : ""}
-                </td>
-            `;
-            ordersTable.appendChild(row);
-        });
+    function fetchOrders() {
+        fetch("http://localhost:3000/orders")
+            .then(response => response.json())
+            .then(orders => {
+                ordersTable.innerHTML = "";
+                orders.forEach((order, index) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${order.tableNumber}</td>
+                        <td>${order.items.map(item => item.item).join(", ")}</td>
+                        <td>${order.status}</td>
+                        <td>
+                            ${order.status === "pending" ? `<button onclick="markAsDelivered(${index})">Mark as Delivered</button>` : "Delivered"}
+                        </td>
+                    `;
+                    ordersTable.appendChild(row);
+                });
+            })
+            .catch(error => console.error("Error fetching orders:", error));
     }
 
-
-    // تحديث حالة الطلب إلى "Delivered"
+    // تحديث الطلب إلى "delivered"
     window.markAsDelivered = function (index) {
-        orders[index].status = "Delivered";
-        localStorage.setItem("orders", JSON.stringify(orders));
-        renderOrders(orderFilter.value);
+        fetch("http://localhost:3000/order/deliver", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ index })
+        })
+        .then(response => response.json())
+        .then(() => fetchOrders()); // تحديث الجدول بعد تغيير الحالة
     };
 
-    // تغيير الفلتر لتصفية الطلبات
-    orderFilter.addEventListener("change", function () {
-        renderOrders(this.value);
-    });
-
-    renderOrders("all"); // عرض كل الطلبات عند تحميل الصفحة
+    fetchOrders();
+    setInterval(fetchOrders, 5000); // تحديث الطلبات كل 5 ثوانٍ
 });
