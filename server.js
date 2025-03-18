@@ -26,5 +26,10 @@ app.get("/latest-order", (req, res) => {
     if (orders.length === 0) return res.status(404).json({ message: "لا يوجد طلبات متاحة" });
     res.json(orders[orders.length - 1]);
 });
+// مسار لحذف جميع الطلبات
+app.delete("/orders", (req, res) => {
+    orders = []; // تفريغ قائمة الطلبات
+    res.json({ message: "تم مسح جميع الطلبات بنجاح!" });
+});
 
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
