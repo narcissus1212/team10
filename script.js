@@ -5,7 +5,6 @@ function showMenu() {
     document.getElementById("menu-section").style.display = "block";
 }
 
-// إضافة عنصر جديد للطلب
 function addItem(item, price) {
     selectedItems.push({ item, price });
     localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
@@ -13,13 +12,10 @@ function addItem(item, price) {
     const notification = document.getElementById("notification");
     notification.textContent = `${item} added to your order!`;
     notification.classList.add("show");
-
-    setTimeout(() => {
-        notification.classList.remove("show");
-    }, 3000);
+    
+    setTimeout(() => notification.classList.remove("show"), 3000);
 }
 
-// عرض الطلبات المحفوظة
 function showReview() {
     document.getElementById("menu-section").style.display = "none";
     document.getElementById("review-section").style.display = "block";
@@ -30,51 +26,35 @@ function showReview() {
 
     selectedItems.forEach((item, index) => {
         totalPrice += item.price;
-
-        const itemDiv = document.createElement("div");
-        itemDiv.classList.add("order-item");
-
-        itemDiv.innerHTML = `
-            <span>${item.item} - ${item.price} EGP</span>
-            <div>
-                <button class="delete-btn" onclick="removeItem(${index})">Remove</button>
-                <button class="add-btn" onclick="showMenu()">Add Another Item</button>
+        orderSummary.innerHTML += `
+            <div class="order-item">
+                <span>${item.item} - ${item.price} EGP</span>
+                <div>
+                    <button class="delete-btn" onclick="removeItem(${index})">Remove</button>
+                    <button class="add-btn" onclick="showMenu()">Add Another Item</button>
+                </div>
             </div>
         `;
-
-        orderSummary.appendChild(itemDiv);
     });
 
-    const totalDiv = document.createElement("div");
-    totalDiv.classList.add("total-price");
-    totalDiv.textContent = `Total Price: ${totalPrice} EGP`;
-    orderSummary.appendChild(totalDiv);
+    orderSummary.innerHTML += `<div class="total-price">Total Price: ${totalPrice} EGP</div>`;
 }
 
-// حذف عنصر من الطلب
 function removeItem(index) {
     selectedItems.splice(index, 1);
     localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
     showReview();
 }
 
-// إرسال الطلب إلى السيرفر
 function submitOrder() {
     const tableNumber = document.getElementById("table-number").value;
-    if (!tableNumber) {
-        alert("Please enter your table number.");
-        return;
-    }
+    if (!tableNumber) return alert("Please enter your table number.");
+    if (selectedItems.length === 0) return alert("Your order is empty!");
 
-    if (selectedItems.length === 0) {
-        alert("Your order is empty!");
-        return;
-    }
-
-    fetch("http://localhost:3000/orders", {
+    fetch("http://localhost:3000/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tableNumber, items: selectedItems, status: "pending" })
+        body: JSON.stringify({ tableNumber, order: selectedItems })
     })
     .then(response => response.json())
     .then(data => {
@@ -88,11 +68,10 @@ function submitOrder() {
     });
 }
 
-// تسجيل Service Worker لو كنتِ تستخدمين PWA
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
         navigator.serviceWorker.register("/service-worker.js")
-        .then((registration) => console.log("Service Worker registered with scope:", registration.scope))
-        .catch((error) => console.log("Service Worker registration failed:", error));
+        .then(reg => console.log("Service Worker registered with scope:", reg.scope))
+        .catch(err => console.log("Service Worker registration failed:", err));
     });
 }
