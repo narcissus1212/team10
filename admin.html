@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <h1>Admin Panel</h1>
+
+    <!-- فلتر الحالة -->
+    <label for="orderFilter">Filter Orders:</label>
+    <select id="orderFilter">
+        <option value="all">All Orders</option>
+        <option value="pending">Pending Orders</option>
+        <option value="delivered">Delivered Orders</option>
+    </select>
+
+    <!-- جدول الطلبات -->
+    <table>
+        <thead>
+            <tr>
+                <th>Table Number</th>
+                <th>Order Details</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="ordersTable">
+            <!-- الطلبات ستُعرض هنا ديناميكياً -->
+        </tbody>
+    </table>
+
+    <script src="admin.js"></script>
+</body>
+
+</html>
