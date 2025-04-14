@@ -67,9 +67,27 @@
 
     <!-- قسم مراجعة الطلب -->
     <section id="review-section" style="display: none;">
+        <h2>Choose Order Type</h2>
+        <label>
+            <input type="radio" name="orderType" value="dine-in" checked> Dine-in
+        </label>
+        <label>
+            <input type="radio" name="orderType" value="takeaway"> Takeaway
+        </label>
+        <label>
+            <input type="radio" name="orderType" value="online"> Online Reservation
+        </label>
+
+        <div id="time-input" style="display: none;">
+            <label for="arrival-time">Expected Arrival Time:</label>
+            <input type="time" id="arrival-time">
+            <p id="countdown"></p>
+        </div>
+
         <h1>Order Summary</h1>
         <div class="order-summary">
             <!-- سيتم عرض الأطعمة هنا -->
+
         </div>
         <label for="table-number">Enter Table Number:</label>
         <input type="number" id="table-number" placeholder="Table Number" min="1">
