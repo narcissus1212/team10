@@ -1,4 +1,5 @@
 let selectedItems = JSON.parse(localStorage.getItem("selectedItems")) || [];
+let chosenOrderType = null;
 
 function showMenu() {
     document.getElementById("welcome-section").style.display = "none";
@@ -10,11 +11,18 @@ function addItem(item, price) {
     localStorage.setItem("selectedItems", JSON.stringify(selectedItems));
 
     const notification = document.getElementById("notification");
-    notification.textContent = `${item} added to your order!`;
-    notification.classList.add("show");
-    
-    setTimeout(() => notification.classList.remove("show"), 3000);
+
+    // تحقق من وجود العنصر أولًا
+    if (notification) {
+        notification.textContent = `${item} was added to your order!`;
+        notification.classList.add("show");
+
+        setTimeout(() => notification.classList.remove("show"), 3000);
+    } else {
+        console.error("Notification element not found!");
+    }
 }
+
 
 function showReview() {
     document.getElementById("menu-section").style.display = "none";
@@ -31,7 +39,7 @@ function showReview() {
                 <span>${item.item} - ${item.price} EGP</span>
                 <div>
                     <button class="delete-btn" onclick="removeItem(${index})">Remove</button>
-                    <button class="add-btn" onclick="showMenu()">Add Another Item</button>
+                    <button class="add-btn" onclick="showMenu()">Add another item</button>
                 </div>
             </div>
         `;
@@ -47,31 +55,63 @@ function removeItem(index) {
 }
 
 function submitOrder() {
-    const tableNumber = document.getElementById("table-number").value;
-    if (!tableNumber) return alert("Please enter your table number.");
-    if (selectedItems.length === 0) return alert("Your order is empty!");
+    // 1. اجلب رقم الطاولة
+    const tableNumberInput = document.getElementById("table-number");
+    const tableNumber = tableNumberInput.value.trim();
 
+    // 2. اجلب كل راديو بوتونز باسم orderType
+    const orderTypeRadios = document.getElementsByName("orderType");
+    let orderTypeValue;
+    for (const radio of orderTypeRadios) {
+        if (radio.checked) {
+            orderTypeValue = radio.value;
+            break;
+        }
+    }
+
+    // 3. التحقق من صحة البيانات
+    if (!tableNumber) {
+        alert("Please enter your table number.");
+        tableNumberInput.focus();
+        return;
+    }
+    if (!orderTypeValue) {
+        alert("Please select the order type.");
+        return;
+    }
+    if (selectedItems.length === 0) {
+        alert("Your order is empty!");
+        return;
+    }
+
+    // 4. جهّز جسم الطلب
+    const orderData = {
+        tableNumber: Number(tableNumber),
+        order: selectedItems,
+        orderType: orderTypeValue
+    };
+
+    // 5. طباعة بيانات الطلب في الـ console للـ debugging
+    console.log("🔍 Submitting Order:", orderData);
+
+    // 6. أرسل الـ POST إلى السيرفر
     fetch("http://localhost:3000/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tableNumber, order: selectedItems })
+        body: JSON.stringify(orderData)
     })
-    .then(response => response.json())
+    .then(async response => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.message);
+        return payload;
+    })
     .then(data => {
         alert(data.message);
         localStorage.clear();
         window.location.reload();
     })
-    .catch(error => {
-        console.error("Error:", error);
-        alert("Failed to send order. Please try again.");
-    });
-}
-
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/service-worker.js")
-        .then(reg => console.log("Service Worker registered with scope:", reg.scope))
-        .catch(err => console.log("Service Worker registration failed:", err));
+    .catch(err => {
+        console.error("❌ Submit failed:", err);
+        alert(err.message || "Failed to submit the order. Please try again.");
     });
 }
