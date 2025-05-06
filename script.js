@@ -1,6 +1,22 @@
 let selectedItems = JSON.parse(localStorage.getItem("selectedItems")) || [];
 let chosenOrderType = null;
 
+// Show/hide reservation time input based on selected order type
+window.addEventListener('DOMContentLoaded', () => {
+    const orderTypeRadios = document.getElementsByName("orderType");
+    const timeContainer = document.getElementById("reservation-time-container");
+
+    orderTypeRadios.forEach(radio => {
+        radio.addEventListener("change", () => {
+            if (radio.value === "Online Reservation" && radio.checked)   {
+                timeContainer.style.display = "block";
+            } else if (radio.checked) {
+                timeContainer.style.display = "none";
+            }
+        });
+    });
+});
+
 function showMenu() {
     document.getElementById("welcome-section").style.display = "none";
     document.getElementById("menu-section").style.display = "block";
@@ -14,7 +30,7 @@ function addItem(item, price) {
 
     // تحقق من وجود العنصر أولًا
     if (notification) {
-        notification.textContent = `${item} was added to your order!`;
+        notification.textContent = ${item} was added to your order!;
         notification.classList.add("show");
 
         setTimeout(() => notification.classList.remove("show"), 3000);
@@ -45,7 +61,7 @@ function showReview() {
         `;
     });
 
-    orderSummary.innerHTML += `<div class="total-price">Total Price: ${totalPrice} EGP</div>`;
+    orderSummary.innerHTML += <div class="total-price">Total Price: ${totalPrice} EGP</div>;
 }
 
 function removeItem(index) {
@@ -83,13 +99,19 @@ function submitOrder() {
         alert("Your order is empty!");
         return;
     }
+    // time if reservation
+    const reservationTimeInput = document.getElementById("reservation-time");
+    const reservationTime = (orderTypeValue === "Online Reservation" && reservationTimeInput) ? reservationTimeInput.value : null;
+
 
     // 4. جهّز جسم الطلب
     const orderData = {
         tableNumber: Number(tableNumber),
         order: selectedItems,
-        orderType: orderTypeValue
+        orderType: orderTypeValue,
+        reservationTime: orderTypeValue === "Online Reservation" ? reservationTime : null
     };
+    
 
     // 5. طباعة بيانات الطلب في الـ console للـ debugging
     console.log("🔍 Submitting Order:", orderData);
