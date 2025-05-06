@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 ordersTable.innerHTML = ""; // Clear table before filling
 
                 if (!orders.length) {
-                    ordersTable.innerHTML = `<tr><td colspan="5">❌ No orders available</td></tr>`;
+                    ordersTable.innerHTML = <tr><td colspan="5">❌ No orders available</td></tr>;
                     return;
                 }
 
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
 
                     statusSelect.addEventListener("change", () => {
-                        fetch(`http://localhost:3000/orders/${order.id}`, {
+                        fetch(http://localhost:3000/orders/${order.id}, {
                             method: "PUT",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ status: statusSelect.value })
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     deleteBtn.textContent = "Delete";
                     deleteBtn.addEventListener("click", () => {
                         if (confirm("Are you sure you want to delete this order?")) {
-                            fetch(`http://localhost:3000/orders/${order.id}`, {
+                            fetch(http://localhost:3000/orders/${order.id}, {
                                 method: "DELETE"
                             })
                             .then(() => {
@@ -52,15 +52,22 @@ document.addEventListener("DOMContentLoaded", function () {
                             .catch(err => console.error("❌ Failed to delete order:", err));
                         }
                     });
-
                     // Fill table row
                     row.innerHTML = `
-                        <td>${order.tableNumber}</td>
-                        <td>${order.order.map(i => `${i.item} (${i.price} EGP)`).join(", ")}</td>
-                        <td>${order.orderType || "Unknown"}</td>
-                        <td>${order.status || "Not Set"}</td>
-                        <td></td>
-                    `;
+                    <td>${order.tableNumber}</td>
+                    <td>${order.order.map(i => ${i.item} (${i.price} EGP)).join(", ")}</td>
+                    <td>
+                        ${order.orderType}
+                        ${order.orderType === "Online Reservation" && order.reservationTime 
+                            ? ` <span style="color: #888;">⏰ ${order.reservationTime}</span>` 
+                            : ""}
+                    </td>
+                    <td>${order.status || "Not Set"}</td>
+                    <td></td>
+                `;
+                
+                
+                
                     row.children[4].appendChild(statusSelect); // Append status dropdown
                     row.children[4].appendChild(deleteBtn);    // Append delete button
 
