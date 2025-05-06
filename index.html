@@ -27,34 +27,41 @@
             <div class="menu-item">
                 <span>Pizza</span>
                 <img src="https://media.elbalad.news/2024/10/large/970/7/550.jpg" alt="Pizza">
-                <span>20 EGP</span>
-                <button class="add-item" onclick="addItem('Pizza', 20)">Add</button>
+                <span>180 EGP</span>
+                <button class="add-item" onclick="addItem('Pizza', 180)">Add</button>
             </div>
             <div class="menu-item">
                 <span>Burger</span>
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR76ofD1B4fZ_ZuvJxv4rvWRBVocwreUzIuvg&s" alt="Burger">
-                <span>15 EGP</span>
-                <button class="add-item" onclick="addItem('Burger', 15)">Add</button>
+                <span>85 EGP</span>
+                <button class="add-item" onclick="addItem('Burger', 85)">Add</button>
             </div>
             <div class="menu-item">
                 <span>Pasta</span>
                 <img src="https://images.akhbarelyom.com//images/images/medium/20211019121241145.jpg" alt="Pasta">
-                <span>18 EGP</span>
-                <button class="add-item" onclick="addItem('Pasta', 18)">Add</button>
+                <span>90 EGP</span>
+                <button class="add-item" onclick="addItem('Pasta', 90)">Add</button>
             </div>
             <div class="menu-item">
                 <span>Salad</span>
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp2rMTnBtIfe1uI18bhcv0d7ASU2vF84gwIQ&s" alt="Salad">
-                <span>10 EGP</span>
-                <button class="add-item" onclick="addItem('Salad', 10)">Add</button>
+                <span>25 EGP</span>
+                <button class="add-item" onclick="addItem('Salad', 25)">Add</button>
             </div>
             <div class="menu-item">
                 <span>Sushi</span>
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFnlG6fLpRXoU9btpJ2klYwoq9GyE4ZHrMQA&s" alt="Sushi">
-                <span>25 EGP</span>
-                <button class="add-item" onclick="addItem('Sushi', 25)">Add</button>
+                <span>300 EGP</span>
+                <button class="add-item" onclick="addItem('Sushi', 300)">Add</button>
             </div>
+            <div class="menu-item">
+                <span>Coleslaw</span>
+                <img src="https://www.jocooks.com/wp-content/uploads/2020/02/kfc-coleslaw-1-8.jpg" alt="Coleslaw">
 
+                <span>30 EGP</span>
+                <button class="add-item" onclick="addItem('Coleslaw', 30)">Add</button>
+            </div>
+            
             <!-- Choose Order Type -->
             <div class="order-type-container">
                 <span class="order-type-label">Choose Order Type:</span>
@@ -68,8 +75,13 @@
                     <input type="radio" id="reservation" name="orderType" value="Online Reservation">
                     <label for="reservation">Online Reservation</label>
                 </div>
+                <!-- Choose Time of reservation -->
+                <div id="reservation-time-container" style="display: none; margin-top: 20px;">
+                    <label for="reservation-time" style="font-size: 1.1rem;">Select Time:</label><br>
+                    <input type="time" id="reservation-time" name="reservation-time" style="padding: 10px; font-size: 1rem; margin-top: 10px;">
+                  </div>
             </div>
-            
+
 
             <a href="#" onclick="showReview()"><button class="button">Review Order</button></a>
         </div>
