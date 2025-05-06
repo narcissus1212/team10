@@ -18,7 +18,7 @@ app.post("/order", (req, res) => {
 
     // التأكد من وجود البيانات الضرورية
     if (!tableNumber || !Array.isArray(order) || order.length === 0 || !orderType) {
-        console.warn("⚠️ Missing fields in request:", { tableNumber, order, orderType });
+        console.warn("⚠ Missing fields in request:", { tableNumber, order, orderType });
         return res.status(400).json({ message: "Table number, order items, and order type are required." });
     }
 
@@ -27,6 +27,7 @@ app.post("/order", (req, res) => {
         tableNumber,
         order,
         orderType,
+        reservationTime: req.body.reservationTime || null,
         status: "Being Cooked",
         time: new Date().toISOString()
     };
@@ -72,7 +73,7 @@ app.delete("/orders/:id", (req, res) => {
     }
 
     const deleted = orders.splice(index, 1)[0];
-    res.json({ message: "🗑️ Order deleted successfully", order: deleted });
+    res.json({ message: "🗑 Order deleted successfully", order: deleted });
 });
 
 // Delete all orders
@@ -81,4 +82,4 @@ app.delete("/orders", (req, res) => {
     res.json({ message: "All orders have been cleared successfully!" });
 });
 
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(🚀 Server running on http://localhost:${PORT}));
